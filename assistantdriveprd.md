@@ -1,4 +1,3 @@
-```markdown
 # AssistantDrive — Mahsulot Talablari Hujjati (PRD)
 
 Versiya: 0.1  
@@ -179,5 +178,3 @@ Agar xohlasangiz, men keyingi bosqichda:
 - API spetsifikatsiyasini (endpoints, schema) batafsil yozib beraman,
 - MVP uchun texnik tasklar ro‘yxatini (Jira/GitHub Issues formatida) yarataman,
 - Yoki targ‘ibot va beta-testing rejasini tuzamiz.
-
-```
