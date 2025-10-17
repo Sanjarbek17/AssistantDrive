@@ -9,7 +9,12 @@ class AssistantDriveApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(title: AppConstants.appName, debugShowCheckedModeBanner: false, theme: _buildTheme(), home: const HomePage());
+    return MaterialApp(
+      title: AppConstants.appName,
+      debugShowCheckedModeBanner: false,
+      theme: _buildTheme(),
+      home: const HomePage(),
+    );
   }
 
   ThemeData _buildTheme() {
