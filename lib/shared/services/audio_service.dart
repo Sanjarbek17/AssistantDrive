@@ -9,14 +9,14 @@ class AudioService {
 
   // Audio file paths for common driving assistant phrases
   static const Map<String, String> audioFiles = {
-    'welcome': 'audio/welcome_uzbek.mp3',
-    'turn_left': 'audio/turn_left_uzbek.mp3',
-    'turn_right': 'audio/turn_right_uzbek.mp3',
-    'continue_straight': 'audio/continue_straight_uzbek.mp3',
-    'speed_warning': 'audio/speed_warning_uzbek.mp3',
-    'destination_reached': 'audio/destination_reached_uzbek.mp3',
-    'traffic_ahead': 'audio/traffic_ahead_uzbek.mp3',
-    'rerouting': 'audio/rerouting_uzbek.mp3',
+    'welcome': 'audio/welcome_english.mp3',
+    'turn_left': 'audio/turn_left_english.mp3',
+    'turn_right': 'audio/turn_right_english.mp3',
+    'continue_straight': 'audio/continue_straight_english.mp3',
+    'speed_warning': 'audio/speed_warning_english.mp3',
+    'destination_reached': 'audio/destination_reached_english.mp3',
+    'traffic_ahead': 'audio/traffic_ahead_english.mp3',
+    'rerouting': 'audio/rerouting_english.mp3',
   };
 
   // Play specific audio file

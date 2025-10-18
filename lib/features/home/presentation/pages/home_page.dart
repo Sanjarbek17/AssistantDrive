@@ -48,7 +48,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Audio file not found. Please add welcome_uzbek.mp3 to assets/audio/'),
+            content: Text('Audio file not found. Please add welcome_english.mp3 to assets/audio/'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -144,23 +144,23 @@ class _HomePageState extends ConsumerState<HomePage> {
   String _getAudioDescription(String command) {
     switch (command) {
       case 'welcome':
-        return 'AssistantDrive ga xush kelibsiz!';
+        return 'Welcome to AssistantDrive!';
       case 'turn_left':
-        return 'Chapga burilinq';
+        return 'Turn left';
       case 'turn_right':
-        return "O'ngga burilinq";
+        return 'Turn right';
       case 'continue_straight':
-        return "To'g'ri davom eting";
+        return 'Continue straight';
       case 'speed_warning':
-        return 'Tezlikni kamaytiring';
+        return 'Reduce your speed';
       case 'destination_reached':
-        return 'Maqsadga yetib keldingiz';
+        return 'You have reached your destination';
       case 'traffic_ahead':
-        return 'Oldinda tirbandlik bor';
+        return 'Traffic ahead';
       case 'rerouting':
-        return "Yangi yo'l topilmoqda";
+        return 'Finding new route';
       default:
-        return 'Uzbek driving instruction';
+        return 'English driving instruction';
     }
   }
 
@@ -176,24 +176,24 @@ class _HomePageState extends ConsumerState<HomePage> {
             children: [
               Text('🎵 Pre-recorded Audio System', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               SizedBox(height: 16),
-              Text('This app uses pre-recorded audio files in Uzbek language for better pronunciation and reliability.'),
+              Text('This app uses pre-recorded audio files in English language for better pronunciation and reliability.'),
               SizedBox(height: 16),
               Text('📁 Required Audio Files:', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              Text('• welcome_uzbek.mp3 - Welcome message'),
-              Text('• turn_left_uzbek.mp3 - Turn left instruction'),
-              Text('• turn_right_uzbek.mp3 - Turn right instruction'),
-              Text('• continue_straight_uzbek.mp3 - Continue straight'),
-              Text('• speed_warning_uzbek.mp3 - Speed warning'),
-              Text('• destination_reached_uzbek.mp3 - Destination reached'),
-              Text('• traffic_ahead_uzbek.mp3 - Traffic warning'),
-              Text('• rerouting_uzbek.mp3 - Rerouting message'),
+              Text('• welcome_english.mp3 - Welcome message'),
+              Text('• turn_left_english.mp3 - Turn left instruction'),
+              Text('• turn_right_english.mp3 - Turn right instruction'),
+              Text('• continue_straight_english.mp3 - Continue straight'),
+              Text('• speed_warning_english.mp3 - Speed warning'),
+              Text('• destination_reached_english.mp3 - Destination reached'),
+              Text('• traffic_ahead_english.mp3 - Traffic warning'),
+              Text('• rerouting_english.mp3 - Rerouting message'),
               SizedBox(height: 16),
               Text('📍 Location:', style: TextStyle(fontWeight: FontWeight.bold)),
               Text('Place audio files in: assets/audio/'),
               SizedBox(height: 16),
               Text('🎙️ Recording Tips:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('• Use native Uzbek speaker'),
+              Text('• Use clear English pronunciation'),
               Text('• Clear, calm voice'),
               Text('• 44.1kHz, 16-bit quality'),
               Text('• 2-5 seconds per phrase'),
