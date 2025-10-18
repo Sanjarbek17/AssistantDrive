@@ -68,14 +68,14 @@ class _HomePageState extends ConsumerState<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Available Audio Commands'),
+        title: const Text('Navigation & Road Sign Commands'),
         content: SizedBox(
           width: double.maxFinite,
           height: 400,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Available pre-recorded phrases:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Available navigation and road sign alerts:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               Expanded(
                 child: ListView.builder(
@@ -143,24 +143,48 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   String _getAudioDescription(String command) {
     switch (command) {
+      // Welcome
       case 'welcome':
-        return 'Welcome to AssistantDrive!';
+        return 'Welcome to your driving assistant!';
+
+      // Navigation Commands
       case 'turn_left':
         return 'Turn left';
       case 'turn_right':
         return 'Turn right';
       case 'continue_straight':
         return 'Continue straight';
-      case 'speed_warning':
-        return 'Reduce your speed';
       case 'destination_reached':
         return 'You have reached your destination';
-      case 'traffic_ahead':
-        return 'Traffic ahead';
       case 'rerouting':
         return 'Finding new route';
+      case 'traffic_ahead':
+        return 'Traffic ahead';
+
+      // Road Sign Alerts
+      case 'stop_sign':
+        return 'Stop sign ahead - come to a complete stop';
+      case 'no_stopping':
+        return 'No stopping zone - keep moving';
+      case 'speed_limit':
+        return 'Speed limit change - adjust your speed';
+      case 'no_parking':
+        return 'No parking zone - do not park here';
+      case 'yield_ahead':
+        return 'Yield sign ahead - give way to other traffic';
+      case 'school_zone':
+        return 'School zone - reduce speed, watch for children';
+      case 'construction_zone':
+        return 'Construction zone - slow down, be cautious';
+      case 'no_entry':
+        return 'No entry - do not proceed';
+      case 'pedestrian_crossing':
+        return 'Pedestrian crossing ahead - watch for people';
+      case 'traffic_light_ahead':
+        return 'Traffic light ahead - prepare to stop if needed';
+
       default:
-        return 'English driving instruction';
+        return 'Driving assistant command';
     }
   }
 
@@ -174,29 +198,48 @@ class _HomePageState extends ConsumerState<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('🎵 Pre-recorded Audio System', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text('🚗 Complete Driving Assistant System', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               SizedBox(height: 16),
-              Text('This app uses pre-recorded audio files in English language for better pronunciation and reliability.'),
+              Text('This app uses pre-recorded audio for navigation commands and road sign alerts in English.'),
               SizedBox(height: 16),
               Text('📁 Required Audio Files:', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
+              Text(
+                'Navigation Commands:',
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+              ),
               Text('• welcome_english.mp3 - Welcome message'),
               Text('• turn_left_english.mp3 - Turn left instruction'),
               Text('• turn_right_english.mp3 - Turn right instruction'),
               Text('• continue_straight_english.mp3 - Continue straight'),
-              Text('• speed_warning_english.mp3 - Speed warning'),
               Text('• destination_reached_english.mp3 - Destination reached'),
+              Text('• rerouting_english.mp3 - Finding new route'),
               Text('• traffic_ahead_english.mp3 - Traffic warning'),
-              Text('• rerouting_english.mp3 - Rerouting message'),
+              SizedBox(height: 8),
+              Text(
+                'Road Sign Alerts:',
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
+              ),
+              Text('• stop_sign_english.mp3 - Stop sign alert'),
+              Text('• no_stopping_english.mp3 - No stopping zone warning'),
+              Text('• speed_limit_english.mp3 - Speed limit change alert'),
+              Text('• no_parking_english.mp3 - No parking zone warning'),
+              Text('• yield_ahead_english.mp3 - Yield sign alert'),
+              Text('• school_zone_english.mp3 - School zone warning'),
+              Text('• construction_zone_english.mp3 - Construction zone alert'),
+              Text('• no_entry_english.mp3 - No entry warning'),
+              Text('• pedestrian_crossing_english.mp3 - Pedestrian crossing alert'),
+              Text('• traffic_light_ahead_english.mp3 - Traffic light warning'),
               SizedBox(height: 16),
               Text('📍 Location:', style: TextStyle(fontWeight: FontWeight.bold)),
               Text('Place audio files in: assets/audio/'),
               SizedBox(height: 16),
               Text('🎙️ Recording Tips:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('• Use clear English pronunciation'),
-              Text('• Clear, calm voice'),
+              Text('• Use clear, calm English voice'),
+              Text('• Navigation: Friendly, guiding tone'),
+              Text('• Road signs: More urgent, safety-focused'),
               Text('• 44.1kHz, 16-bit quality'),
-              Text('• 2-5 seconds per phrase'),
+              Text('• 2-4 seconds per alert'),
             ],
           ),
         ),
@@ -239,7 +282,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Your AI driving assistant',
+              'Navigation & Road Sign Assistant',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 32),
@@ -264,7 +307,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _showAudioCommands,
-              icon: const Icon(Icons.list),
+              icon: const Icon(Icons.navigation),
               label: const Text('All Audio Commands'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
@@ -276,7 +319,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ElevatedButton.icon(
               onPressed: _showAudioInstructions,
               icon: const Icon(Icons.info),
-              label: const Text('Audio Setup Guide'),
+              label: const Text('Setup Guide'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
