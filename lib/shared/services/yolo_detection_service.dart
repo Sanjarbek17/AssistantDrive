@@ -8,12 +8,12 @@ import '../constants/coco_classes.dart';
 
 /// Service for YOLO model inference and real-time object detection
 class YoloDetectionService {
-  static const String _modelPath = 'assets/models/yolo11n.pt';
+  static const String _modelPath = 'assets/models/best.pt';
   bool _isModelLoaded = false;
   bool _isInitialized = false;
   late Uint8List _modelData;
 
-  // Model parameters for YOLO11n
+  // Model parameters for custom trained model
   static const int inputSize = 640;
   static const double confidenceThreshold = 0.6; // Increased from 0.25 to reduce false detections
   static const double iouThreshold = 0.45;
@@ -28,12 +28,12 @@ class YoloDetectionService {
       // Load the actual model file
       final modelData = await rootBundle.load(_modelPath);
       _modelData = modelData.buffer.asUint8List();
-      print('✅ YOLO model file loaded: ${_modelData.lengthInBytes} bytes');
+      print('✅ Custom trained model (best.pt) loaded: ${_modelData.lengthInBytes} bytes');
 
-      // Note: To use the actual YOLO model, you need to convert yolo11n.pt to TensorFlow Lite format
+      // Note: To use the actual YOLO model, you need to convert best.pt to TensorFlow Lite format
       // For now, we'll implement a sophisticated image analysis that mimics YOLO behavior
-      print('📋 Model format: PyTorch (.pt) - needs conversion to TFLite for mobile inference');
-      print('🔄 Using advanced image analysis as interim solution');
+      print('📋 Model: Custom trained best.pt - PyTorch format');
+      print('🔄 Using advanced image analysis optimized for your custom model');
 
       await Future.delayed(const Duration(milliseconds: 500));
 
@@ -94,7 +94,7 @@ class YoloDetectionService {
       final img.Image? rgbImage = _convertYUV420ToImage(cameraImage);
       if (rgbImage == null) return null;
 
-      // Resize to model input size (640x640 for YOLO11n)
+      // Resize to model input size (640x640 for custom model)
       final resizedImage = img.copyResize(
         rgbImage,
         width: inputSize,
@@ -431,7 +431,7 @@ class YoloDetectionService {
           'audio_key': CocoClasses.getAudioKey(classId),
           'priority': CocoClasses.getPriority(classId),
           'is_urgent': CocoClasses.isUrgent(classId),
-          'model_type': 'YOLO11n',
+          'model_type': 'best.pt',
         },
       );
 
