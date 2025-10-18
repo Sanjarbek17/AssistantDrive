@@ -7,8 +7,8 @@ plugins {
 
 android {
     namespace = "com.example.assistant_drive"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 36  // Updated to fix camera_android requirement
+    ndkVersion = "27.0.12077973"  // Updated to fix plugin requirements
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
