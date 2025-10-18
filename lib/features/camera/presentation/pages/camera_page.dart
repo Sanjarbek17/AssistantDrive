@@ -248,6 +248,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
           'Camera Detection',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: _showDetectionSettings,

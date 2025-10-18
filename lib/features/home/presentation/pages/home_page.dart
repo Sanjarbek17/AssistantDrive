@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../shared/services/audio_service.dart';
-import '../../../camera/presentation/pages/camera_page.dart';
+import '../../../../shared/constants/app_theme.dart';
+import '../../../../shared/widgets/app_card.dart';
+import '../../../../shared/widgets/app_button.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -10,14 +13,38 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMixin {
   final AudioService _audioService = AudioService();
   bool isPlaying = false;
   String currentAudioKey = '';
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+
+  // Mock data for dashboard stats
+  final int totalDetections = 147;
+  final int todayDetections = 12;
+  final String lastDetectionTime = "2 minutes ago";
+  final bool isSystemActive = true;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fadeAnimation =
+        Tween<double>(
+          begin: 0.0,
+          end: 1.0,
+        ).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeInOut,
+          ),
+        );
+
+    _animationController.forward();
   }
 
   Future<void> _speak() async {
@@ -189,163 +216,489 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  void _showAudioInstructions() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Audio Setup Guide'),
-        content: const SingleChildScrollView(
+  @override
+  void dispose() {
+    _audioService.stopAudio();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildWelcomeHeader() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(AppDimensions.radiusXL),
+          bottomRight: Radius.circular(AppDimensions.radiusXL),
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppDimensions.paddingL),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              Text('🚗 Complete Driving Assistant System', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              SizedBox(height: 16),
-              Text('This app uses pre-recorded audio for navigation commands and road sign alerts in English.'),
-              SizedBox(height: 16),
-              Text('📁 Required Audio Files:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text(
-                'Navigation Commands:',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome Back!',
+                        style: AppTextStyles.h2.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Your AI driving assistant is ready',
+                        style: AppTextStyles.bodyLarge.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(AppDimensions.paddingM),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+                    ),
+                    child: Icon(
+                      Icons.drive_eta,
+                      size: AppDimensions.iconXL,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              Text('• welcome_english.mp3 - Welcome message'),
-              Text('• turn_left_english.mp3 - Turn left instruction'),
-              Text('• turn_right_english.mp3 - Turn right instruction'),
-              Text('• continue_straight_english.mp3 - Continue straight'),
-              Text('• destination_reached_english.mp3 - Destination reached'),
-              Text('• rerouting_english.mp3 - Finding new route'),
-              Text('• traffic_ahead_english.mp3 - Traffic warning'),
-              SizedBox(height: 8),
-              Text(
-                'Road Sign Alerts:',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
+              const SizedBox(height: AppDimensions.paddingL),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.paddingM,
+                      vertical: AppDimensions.paddingS,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSystemActive ? AppColors.success : AppColors.warning,
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isSystemActive ? Icons.check_circle : Icons.warning,
+                          color: Colors.white,
+                          size: AppDimensions.iconS,
+                        ),
+                        const SizedBox(width: AppDimensions.paddingS),
+                        Text(
+                          isSystemActive ? 'System Active' : 'System Offline',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Text('• stop_sign_english.mp3 - Stop sign alert'),
-              Text('• no_stopping_english.mp3 - No stopping zone warning'),
-              Text('• speed_limit_english.mp3 - Speed limit change alert'),
-              Text('• no_parking_english.mp3 - No parking zone warning'),
-              Text('• yield_ahead_english.mp3 - Yield sign alert'),
-              Text('• school_zone_english.mp3 - School zone warning'),
-              Text('• construction_zone_english.mp3 - Construction zone alert'),
-              Text('• no_entry_english.mp3 - No entry warning'),
-              Text('• pedestrian_crossing_english.mp3 - Pedestrian crossing alert'),
-              Text('• traffic_light_ahead_english.mp3 - Traffic light warning'),
-              SizedBox(height: 16),
-              Text('📍 Location:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('Place audio files in: assets/audio/'),
-              SizedBox(height: 16),
-              Text('🎙️ Recording Tips:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('• Use clear, calm English voice'),
-              Text('• Navigation: Friendly, guiding tone'),
-              Text('• Road signs: More urgent, safety-focused'),
-              Text('• 44.1kHz, 16-bit quality'),
-              Text('• 2-4 seconds per alert'),
             ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Got it'),
+      ),
+    );
+  }
+
+  Widget _buildStatsGrid() {
+    return Padding(
+      padding: const EdgeInsets.all(AppDimensions.paddingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Today\'s Overview',
+            style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+          Row(
+            children: [
+              Expanded(
+                child: AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.visibility,
+                            color: AppColors.primary,
+                            size: AppDimensions.iconL,
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.trending_up,
+                            color: AppColors.success,
+                            size: AppDimensions.iconM,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppDimensions.paddingM),
+                      Text(
+                        '$todayDetections',
+                        style: AppTextStyles.h1.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Today\'s Detections',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppDimensions.paddingM),
+              Expanded(
+                child: AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.analytics,
+                            color: AppColors.secondary,
+                            size: AppDimensions.iconL,
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.star,
+                            color: AppColors.warning,
+                            size: AppDimensions.iconM,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppDimensions.paddingM),
+                      Text(
+                        '$totalDetections',
+                        style: AppTextStyles.h1.copyWith(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Total Detections',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _audioService.stopAudio();
-    super.dispose();
+  Widget _buildQuickActions() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Quick Actions',
+            style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+          AppCard(
+            onTap: () => context.goNamed('camera'),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                  ),
+                  child: Icon(
+                    Icons.camera_alt,
+                    color: AppColors.primary,
+                    size: AppDimensions.iconL,
+                  ),
+                ),
+                const SizedBox(width: AppDimensions.paddingM),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Start Camera Detection',
+                        style: AppTextStyles.h4.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Begin real-time object detection',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.textSecondary,
+                  size: AppDimensions.iconS,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+          AppCard(
+            onTap: () => context.goNamed('history'),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                  ),
+                  child: Icon(
+                    Icons.history,
+                    color: AppColors.secondary,
+                    size: AppDimensions.iconL,
+                  ),
+                ),
+                const SizedBox(width: AppDimensions.paddingM),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Detection History',
+                        style: AppTextStyles.h4.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'View past detection records',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.textSecondary,
+                  size: AppDimensions.iconS,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentActivity() {
+    return Padding(
+      padding: const EdgeInsets.all(AppDimensions.paddingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recent Activity',
+                style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
+              ),
+              TextButton(
+                onPressed: () => context.goNamed('history'),
+                child: Text(
+                  'View All',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+          AppCard(
+            child: Column(
+              children: [
+                _buildActivityItem(
+                  icon: Icons.stop,
+                  title: 'Stop Sign Detected',
+                  subtitle: lastDetectionTime,
+                  color: AppColors.error,
+                ),
+                const Divider(),
+                _buildActivityItem(
+                  icon: Icons.speed,
+                  title: 'Speed Limit Sign',
+                  subtitle: '5 minutes ago',
+                  color: AppColors.warning,
+                ),
+                const Divider(),
+                _buildActivityItem(
+                  icon: Icons.school,
+                  title: 'School Zone Alert',
+                  subtitle: '12 minutes ago',
+                  color: AppColors.info,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppDimensions.paddingS),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: AppDimensions.iconM,
+            ),
+          ),
+          const SizedBox(width: AppDimensions.paddingM),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: AppTextStyles.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomActions() {
+    return Padding(
+      padding: const EdgeInsets.all(AppDimensions.paddingL),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: AppButton(
+                  text: isPlaying ? 'Stop Audio' : 'Test Audio',
+                  icon: Icon(
+                    isPlaying ? Icons.stop : Icons.volume_up,
+                    size: AppDimensions.iconM,
+                  ),
+                  onPressed: isPlaying ? _stop : _speak,
+                  type: ButtonType.secondary,
+                ),
+              ),
+              const SizedBox(width: AppDimensions.paddingM),
+              Expanded(
+                child: AppButton(
+                  text: 'Audio Guide',
+                  icon: Icon(
+                    Icons.navigation,
+                    size: AppDimensions.iconM,
+                  ),
+                  onPressed: _showAudioCommands,
+                  type: ButtonType.primary,
+                ),
+              ),
+            ],
+          ),
+          if (isPlaying && currentAudioKey.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.only(top: AppDimensions.paddingM),
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.audiotrack,
+                    color: AppColors.primary,
+                    size: AppDimensions.iconM,
+                  ),
+                  const SizedBox(width: AppDimensions.paddingS),
+                  Expanded(
+                    child: Text(
+                      'Playing: ${currentAudioKey.replaceAll('_', ' ')}',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AssistantDrive'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.drive_eta,
-              size: 80,
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Welcome to AssistantDrive',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Navigation & Road Sign Assistant',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: isPlaying ? _stop : _speak,
-              icon: Icon(isPlaying ? Icons.stop : Icons.volume_up),
-              label: Text(isPlaying ? 'Stop Audio' : 'Test Welcome Audio'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-            ),
-            if (isPlaying && currentAudioKey.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Playing: ${currentAudioKey.replaceAll('_', ' ')}',
-                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-                ),
-              ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _showAudioCommands,
-              icon: const Icon(Icons.navigation),
-              label: const Text('All Audio Commands'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CameraPage(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.camera_alt),
-              label: const Text('Camera Detection'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: _showAudioInstructions,
-              icon: const Icon(Icons.info),
-              label: const Text('Setup Guide'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-            ),
-          ],
+      backgroundColor: AppColors.background,
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildWelcomeHeader(),
+              _buildStatsGrid(),
+              _buildQuickActions(),
+              _buildRecentActivity(),
+              _buildBottomActions(),
+              const SizedBox(height: AppDimensions.paddingL),
+            ],
+          ),
         ),
       ),
     );

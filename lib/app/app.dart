@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../shared/constants/app_constants.dart';
 import '../shared/constants/app_theme.dart';
-import '../features/home/presentation/pages/home_page.dart';
+import 'router/app_router.dart';
 
 class AssistantDriveApp extends ConsumerWidget {
   const AssistantDriveApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(),
-      home: const HomePage(),
+      routerConfig: router,
     );
   }
 
