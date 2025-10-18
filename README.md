@@ -10,6 +10,11 @@
 
 AssistantDrive is an innovative AI-powered driving assistance system designed to reduce road stress and errors for new drivers. The system uses your smartphone camera (or vehicle cameras) to analyze real-time road conditions and provides instant voice alerts and recommendations through text-to-speech technology.
 
+<div align="center">
+  <img src="flutter_01.png" alt="Real-time Object Detection" width="300"/>
+  <p><em>Real-time object detection with confidence scores for cars, traffic lights, and road signs</em></p>
+</div>
+
 ### 🎯 Key Features
 
 - **Real-time Video Analysis**: Stream video from your phone camera to our AI backend
@@ -18,6 +23,11 @@ AssistantDrive is an innovative AI-powered driving assistance system designed to
 - **Proximity Alerts**: Warning for vehicles approaching too close
 - **Voice Guidance**: Multi-language TTS support (Uzbek, Russian, English)
 - **Route Assistance**: Proactive turn-by-turn navigation hints
+
+<div align="center">
+  <img src="flutter_02.png" alt="AssistantDrive Home Screen" width="300"/>
+  <p><em>Clean and intuitive home interface showing system status and daily detection overview</em></p>
+</div>
 
 ## 🚀 Quick Start
 
@@ -66,6 +76,11 @@ The system detects and responds to various driving scenarios:
 | Speed Limit | Speed limit sign detection | Low | Real-time |
 | Pedestrian Alert | Pedestrian in crosswalk | High | < 1s |
 | Proximity Warning | Too close to vehicle ahead | Medium | < 1.5s |
+
+<div align="center">
+  <img src="flutter_03.png" alt="Detection History and Analytics" width="300"/>
+  <p><em>Comprehensive detection history with accuracy metrics and detailed road signs analysis</em></p>
+</div>
 
 ## 🔧 Technical Specifications
 
@@ -164,6 +179,11 @@ The system detects and responds to various driving scenarios:
 - **User Satisfaction**: ≥ 70% NPS score in beta testing
 - **Response Time**: ≤ 1.5 seconds for alerts
 - **System Reliability**: 99% uptime target
+
+<div align="center">
+  <img src="flutter_04.png" alt="User Profile and Statistics" width="300"/>
+  <p><em>Personal driving profile with detailed statistics and quick access to key features</em></p>
+</div>
 
 ## 🤝 Contributing
 
