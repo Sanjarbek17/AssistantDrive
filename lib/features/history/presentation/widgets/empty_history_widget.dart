@@ -20,21 +20,21 @@ class EmptyHistoryWidget extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.history_outlined,
+                Icons.traffic,
                 size: 50,
                 color: AppColors.primary.withOpacity(0.5),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingL),
             Text(
-              'No Detection History',
+              'No Road Signs Detected',
               style: AppTextStyles.h4.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             Text(
-              'Start using the camera to detect objects.\nYour detection history will appear here.',
+              'Start using the camera to detect road signs.\nYour road sign detection history will appear here.',
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -47,7 +47,7 @@ class EmptyHistoryWidget extends StatelessWidget {
                 // TODO: Implement navigation to camera
               },
               icon: const Icon(Icons.camera_alt),
-              label: const Text('Start Detecting'),
+              label: const Text('Start Road Sign Detection'),
             ),
           ],
         ),

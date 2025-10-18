@@ -14,7 +14,7 @@ class HistoryPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Detection History',
+          'Road Signs History',
           style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
         backgroundColor: AppColors.primary,
@@ -43,7 +43,7 @@ class HistoryPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Today\'s Summary',
+                  'Road Signs Detection Summary',
                   style: AppTextStyles.h4.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -53,9 +53,9 @@ class HistoryPage extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: StatisticsCardWidget(
-                        title: 'Objects Detected',
-                        value: '47',
-                        icon: Icons.visibility,
+                        title: 'Road Signs',
+                        value: '23',
+                        icon: Icons.traffic,
                         color: AppColors.primary,
                       ),
                     ),
@@ -72,7 +72,7 @@ class HistoryPage extends ConsumerWidget {
                     Expanded(
                       child: StatisticsCardWidget(
                         title: 'Accuracy',
-                        value: '94%',
+                        value: '96%',
                         icon: Icons.verified,
                         color: AppColors.success,
                       ),
@@ -93,33 +93,103 @@ class HistoryPage extends ConsumerWidget {
   }
 
   Widget _buildHistoryList() {
-    // Mock data for demonstration
-    final historyItems = [
+    // Road signs detection data - filtering out person class
+    final allDetections = [
       {
-        'objects': ['Person', 'Chair', 'Table'],
+        'objects': ['Stop Sign'],
         'timestamp': DateTime.now().subtract(const Duration(minutes: 5)),
-        'location': 'Living Room',
+        'location': 'Main Street & Oak Ave',
         'confidence': 0.95,
+        'type': 'road_sign',
       },
       {
-        'objects': ['Car', 'Tree'],
-        'timestamp': DateTime.now().subtract(const Duration(hours: 1)),
-        'location': 'Street View',
-        'confidence': 0.89,
-      },
-      {
-        'objects': ['Phone', 'Keys', 'Wallet'],
-        'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
-        'location': 'Bedroom',
+        'objects': ['Person'], // This will be filtered out
+        'timestamp': DateTime.now().subtract(const Duration(minutes: 10)),
+        'location': 'Crosswalk',
         'confidence': 0.92,
+        'type': 'person',
       },
       {
-        'objects': ['Dog', 'Ball'],
+        'objects': ['Speed Limit 25'],
+        'timestamp': DateTime.now().subtract(const Duration(hours: 1)),
+        'location': 'School Zone - Pine St',
+        'confidence': 0.89,
+        'type': 'road_sign',
+      },
+      {
+        'objects': ['Person', 'Bicycle'], // Person will be filtered out
+        'timestamp': DateTime.now().subtract(const Duration(hours: 1, minutes: 30)),
+        'location': 'Park Entrance',
+        'confidence': 0.87,
+        'type': 'mixed',
+      },
+      {
+        'objects': ['Yield Sign'],
+        'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
+        'location': 'Highway 101 Ramp',
+        'confidence': 0.92,
+        'type': 'road_sign',
+      },
+      {
+        'objects': ['No Parking'],
         'timestamp': DateTime.now().subtract(const Duration(hours: 3)),
-        'location': 'Park',
+        'location': 'Downtown District',
         'confidence': 0.88,
+        'type': 'road_sign',
+      },
+      {
+        'objects': ['School Zone'],
+        'timestamp': DateTime.now().subtract(const Duration(hours: 4)),
+        'location': 'Elementary School',
+        'confidence': 0.94,
+        'type': 'road_sign',
+      },
+      {
+        'objects': ['Person', 'Person'], // This will be filtered out
+        'timestamp': DateTime.now().subtract(const Duration(hours: 5)),
+        'location': 'Shopping Mall',
+        'confidence': 0.85,
+        'type': 'person',
+      },
+      {
+        'objects': ['Construction Zone'],
+        'timestamp': DateTime.now().subtract(const Duration(hours: 6)),
+        'location': 'Bridge Construction',
+        'confidence': 0.91,
+        'type': 'road_sign',
+      },
+      {
+        'objects': ['Traffic Light'],
+        'timestamp': DateTime.now().subtract(const Duration(days: 1)),
+        'location': 'City Center',
+        'confidence': 0.96,
+        'type': 'road_sign',
       },
     ];
+
+    // Filter to show only road sign detections (exclude person class)
+    final historyItems = allDetections.where((item) {
+      final objects = List<String>.from(item['objects'] as List);
+      final type = item['type'] as String;
+
+      // Filter out detections that are purely person class or mixed with person
+      if (type == 'person') return false;
+
+      // For mixed detections, filter out person objects but keep road signs
+      if (type == 'mixed') {
+        final roadSignObjects = objects.where((obj) => !obj.toLowerCase().contains('person')).toList();
+
+        if (roadSignObjects.isNotEmpty) {
+          // Update the objects list to exclude person detections
+          item['objects'] = roadSignObjects;
+          return true;
+        }
+        return false;
+      }
+
+      // Keep all road sign detections
+      return type == 'road_sign';
+    }).toList();
 
     if (historyItems.isEmpty) {
       return const EmptyHistoryWidget();
@@ -172,28 +242,46 @@ class HistoryPage extends ConsumerWidget {
               activeColor: AppColors.primary,
             ),
             const SizedBox(height: 16),
-            const Text('Object Type:'),
+            const Text('Road Sign Types:'),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               children: [
                 FilterChip(
-                  label: const Text('People'),
+                  label: const Text('Stop Signs'),
+                  selected: true,
+                  onSelected: (value) {},
+                  selectedColor: AppColors.error.withOpacity(0.2),
+                ),
+                FilterChip(
+                  label: const Text('Speed Limits'),
+                  selected: true,
+                  onSelected: (value) {},
+                  selectedColor: AppColors.warning.withOpacity(0.2),
+                ),
+                FilterChip(
+                  label: const Text('Yield Signs'),
                   selected: true,
                   onSelected: (value) {},
                   selectedColor: AppColors.primary.withOpacity(0.2),
                 ),
                 FilterChip(
-                  label: const Text('Vehicles'),
-                  selected: false,
+                  label: const Text('School Zones'),
+                  selected: true,
                   onSelected: (value) {},
-                  selectedColor: AppColors.primary.withOpacity(0.2),
+                  selectedColor: AppColors.info.withOpacity(0.2),
                 ),
                 FilterChip(
-                  label: const Text('Objects'),
-                  selected: false,
+                  label: const Text('No Parking'),
+                  selected: true,
                   onSelected: (value) {},
-                  selectedColor: AppColors.primary.withOpacity(0.2),
+                  selectedColor: AppColors.secondary.withOpacity(0.2),
+                ),
+                FilterChip(
+                  label: const Text('Construction'),
+                  selected: true,
+                  onSelected: (value) {},
+                  selectedColor: AppColors.warning.withOpacity(0.2),
                 ),
               ],
             ),
