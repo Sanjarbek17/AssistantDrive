@@ -46,6 +46,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
           // Initialize camera state
           await ref.read(cameraStateProvider.notifier).initializeCamera();
+
+          // Start camera stream for YOLO processing
+          _startCameraStream();
         }
       }
     } catch (e) {
@@ -58,6 +61,33 @@ class _CameraPageState extends ConsumerState<CameraPage> {
           ),
         );
       }
+    }
+  }
+
+  /// Start camera stream for YOLO processing
+  void _startCameraStream() {
+    if (!_isCameraInitialized) return;
+
+    try {
+      _cameraController.startImageStream((CameraImage image) {
+        // Pass camera frames to YOLO detection service
+        final yoloDataSource = ref.read(yoloDetectionDataSourceProvider);
+        yoloDataSource.addFrame(image);
+      });
+
+      print('📹 Camera stream started for YOLO processing');
+    } catch (e) {
+      print('❌ Error starting camera stream: $e');
+    }
+  }
+
+  /// Stop camera stream
+  void _stopCameraStream() {
+    try {
+      _cameraController.stopImageStream();
+      print('⏹️ Camera stream stopped');
+    } catch (e) {
+      print('❌ Error stopping camera stream: $e');
     }
   }
 
@@ -198,6 +228,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
   @override
   void dispose() {
+    _stopCameraStream();
     _cameraController.dispose();
     ref.read(cameraStateProvider.notifier).disposeCamera();
     super.dispose();

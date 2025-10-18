@@ -45,6 +45,10 @@ dependencies:
   camera: ^0.10.5+5
   permission_handler: ^11.0.1
   
+  # Machine Learning & YOLO
+  ultralytics_yolo: ^0.0.4
+  image: ^3.3.0
+  
   # Location Services
   geolocator: ^10.1.0
   

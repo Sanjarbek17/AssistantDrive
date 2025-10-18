@@ -4,11 +4,11 @@ import 'dart:math';
 import '../../domain/entities/detection.dart';
 import '../../domain/entities/road_sign.dart';
 import '../../domain/repositories/camera_repository.dart';
-import '../datasources/mock_detection_datasource.dart';
+import '../datasources/yolo_detection_datasource.dart';
 
-/// Implementation of CameraRepository with mock detection capabilities
+/// Implementation of CameraRepository with YOLO detection capabilities
 class CameraRepositoryImpl implements CameraRepository {
-  final MockDetectionDataSource _detectionDataSource;
+  final YoloDetectionDataSource _detectionDataSource;
   StreamSubscription<List<Detection>>? _detectionSubscription;
   StreamController<List<Detection>>? _detectionController;
 
@@ -16,11 +16,10 @@ class CameraRepositoryImpl implements CameraRepository {
 
   @override
   Future<void> initializeCamera() async {
-    // Simulate camera initialization delay
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // In a real implementation, this would initialize the camera
-    print('Camera initialized successfully');
+    // Initialize YOLO detection service
+    print('🚀 Initializing camera with YOLO detection...');
+    await _detectionDataSource.initialize();
+    print('✅ Camera with YOLO detection initialized successfully');
   }
 
   @override
@@ -28,8 +27,9 @@ class CameraRepositoryImpl implements CameraRepository {
     await stopDetection();
     _detectionController?.close();
     _detectionController = null;
+    _detectionDataSource.dispose();
 
-    print('Camera disposed successfully');
+    print('✅ Camera with YOLO detection disposed successfully');
   }
 
   @override
@@ -37,8 +37,8 @@ class CameraRepositoryImpl implements CameraRepository {
     _detectionController?.close();
     _detectionController = StreamController<List<Detection>>.broadcast();
 
-    // Start mock detection stream
-    _detectionSubscription = _detectionDataSource.getMockDetectionStream().listen((detections) {
+    // Start YOLO detection stream
+    _detectionSubscription = _detectionDataSource.startDetection().listen((detections) {
       _detectionController?.add(detections);
     });
 

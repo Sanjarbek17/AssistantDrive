@@ -5,20 +5,28 @@ import '../../domain/entities/detection.dart';
 import '../../domain/entities/road_sign.dart';
 import '../../domain/repositories/camera_repository.dart';
 import '../../data/repositories/camera_repository_impl.dart';
-import '../../data/datasources/mock_detection_datasource.dart';
+import '../../data/datasources/yolo_detection_datasource.dart';
+import '../../../../shared/services/yolo_detection_service.dart';
 
 part 'camera_providers.freezed.dart';
 
-// Data source provider
-final mockDetectionDataSourceProvider = Provider<MockDetectionDataSource>((ref) {
-  final dataSource = MockDetectionDataSource();
+// YOLO service provider
+final yoloDetectionServiceProvider = Provider<YoloDetectionService>((ref) {
+  final service = YoloDetectionService();
+  ref.onDispose(() => service.dispose());
+  return service;
+});
+
+// YOLO data source provider
+final yoloDetectionDataSourceProvider = Provider<YoloDetectionDataSource>((ref) {
+  final dataSource = YoloDetectionDataSource(ref.read(yoloDetectionServiceProvider));
   ref.onDispose(() => dataSource.dispose());
   return dataSource;
 });
 
 // Repository provider
 final cameraRepositoryProvider = Provider<CameraRepository>((ref) {
-  return CameraRepositoryImpl(ref.read(mockDetectionDataSourceProvider));
+  return CameraRepositoryImpl(ref.read(yoloDetectionDataSourceProvider));
 });
 
 // Camera state provider
